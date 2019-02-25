@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+<!--begin head-->
+<meta charset="UTF-8">
+<title>To Do List</title>
+<meta name="keywords" content="">
+<meta name="description" content="">
+<meta name="viewport" content="">
+<meta name="author" content="">
+<!--styles-->
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+<style>
+* {
+    border-radius: 0px !important;
+}
+.p1e {
+    margin-bottom: 1em;
+}
+.status-true {
+    color: #777;
+    font-style: italic;
+    text-decoration: line-through;
+}
+</style>
+<!--scripts-->
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js" integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<!--end head-->
+</head>
+<body>
+<!--begin body-->
+<!--DOM-->
+<div id="app" class="container">
+    <div class="row">
+        <div class="col">
+            <h1>To Do List App in VueJS</h1>
+        </div>
+    </div>
+    <div class="row p1e">
+        <div class="col">
+            <form class="input-group" v-on:submit.prevent="addTask()">
+                <input type="text" class="form-control" v-model="tbox" autofocus>
+                <input type="submit" class="btn btn-success" value="Add Task">
+            </form>
+        </div>
+    </div>
+    <div class="card p1e">
+        <div class="card-body">
+            <strong>{{ tasks.length }} items</strong>
+        </div>
+    </div>
+    <div class="row p1e">
+        <div class="col">
+            <ul class="list-group">
+                <li class="list-group-item" v-for="task in tasks">
+                    <input type="checkbox" v-model="task.done">
+                    <span :class="[task.done ? 'status-true' : '']">{{ task.text }}</span>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="row p1e">
+        <div class="col btn-group">
+            <button class="btn btn-outline-success" v-on:click="removeTasks()">Remove Completed</button>
+            <button class="btn btn-outline-danger" v-on:click="removeAllTasks()">Remove All</button>
+        </div>
+    </div>
+</div>
+<!--VUE-->
+<script>
+var vm = new Vue({
+    el: "#app",
+    data: {
+        tbox: "",
+        tasks: [
+            { text: "esta es una tarea", done: false },
+            { text: "esta tambien es una tarea", done: false },
+            { text: "halloween", done: false }
+        ],
+    }, 
+    mounted() { //lo que se executa al arrancar la app
+        var taskData = localStorage['tasksList'];
+        if(taskData !== undefined) {
+            this.tasks = JSON.parse(taskData);
+        }
+    },
+    beforeUpdate() { //antes de actualizar el data
+
+    },
+    updated() { //despues de actualizar el data
+
+    },
+    methods: {
+        addTask() {
+            if(this.tbox != "") {
+                this.tasks.unshift({ text: this.tbox, done: false});
+                this.tbox = "";
+            }            
+        },
+        removeTasks() {
+            this.tasks = this.tasks.filter( (task) => task.done == false );
+        },
+        removeAllTasks() {
+            this.tasks = [];
+        }
+    },
+    watch: { //observar cambios en el data
+        tasks: function(nuevo, viejo){
+            localStorage['tasksList'] = JSON.stringify(this.tasks);
+        }
+    }
+});
+</script>
+<!--end body-->
+</body>
+</html>
