@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+
+<meta charset="UTF-8">
+<meta name="keywords" description="To do list, list, to do, task, angular">
+<meta name="description" description="it is a to do list">
+<meta name="author" description="Paris E Vazquez">
+<meta name="viewport" content="user-scalable=no, width=device-width, initial-scale=1">
+
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
+<style>
+* {
+    border-radius: 0px !important;
+}
+.item-true {
+    color: #888;
+    font-style: italic;
+    text-decoration: line-through;
+}
+</style>
+    
+</head>
+<body ng-app="miApp">
+
+<div class="container" ng-controller="miCtrl">
+    <h1>To Do List App in AngularJS</h1>
+    <div class="row " style="margin-bottom:1em">
+        <div class="col input-group">
+            <input type="text" class="form-control" ng-model="note" ng-keyup="$event.keyCode == 13 ? add() : null" autofocus>
+            <button class="btn btn-success" ng-click="add()">Add Task</button>
+            
+        </div>
+    </div>
+    <div class="card" style="margin-bottom:1em">
+        <div class="card-body"><strong>{{getTotalItems()}} items</strong></div>
+    </div>
+    <div class="row" style="margin-bottom:1em">
+        <div class="col">
+            <ul class="list-group">
+                <li class="list-group-item" ng-repeat="v in items track by $index">
+                    <input type="checkbox" ng-model="v.done"> 
+                    <span class="item-{{v.done}}">{{v.text}}</span>
+                </li>
+            </ul> 
+        </div>
+    </div>
+    <div class="row" style="margin-bottom:1em">
+        <div class="col btn-group">
+            <button class="btn btn-outline-success" ng-click="removeCompleted()">Remove Completed</button>
+            <button class="btn btn-outline-danger" ng-click="removeAll()">Remove All</button>
+        </div>
+    </div>
+</div>
+
+<script>
+angular.module('miApp', [])
+.controller('miCtrl', function($scope) {
+    $scope.items = [];
+
+    var taskData = localStorage['tasksList'];
+    if(taskData !== undefined) {
+        $scope.items = JSON.parse(taskData);
+    }
+
+    $scope.$watchCollection("items", function(nuevo, viejo) {
+        localStorage['tasksList'] = JSON.stringify($scope.items);
+    });
+
+    $scope.add = function() {
+        if($scope.note != "") {
+            $scope.items.push( {text: $scope.note,done: false} );
+            $scope.note = "" ; 
+        }
+    };
+    $scope.getTotalItems = function() {
+        return $scope.items.length;
+    };
+    $scope.removeCompleted = function() {
+        $scope.items = $scope.items.filter(function(todo){ return !todo.done; });
+    };
+    $scope.removeAll = function() {
+        $scope.items = [];
+    }
+
+    /*
+    $scope.items = [];
+    $scope.add = function() {
+        if($scope.note != "") {
+            $scope.items.push( {text: $scope.note,done: false} );
+            $scope.note = "" ; 
+        }
+    };
+    $scope.getTotalItems = function() {
+        return $scope.items.length;
+    };
+    $scope.removeCompleted = function() {
+        $scope.items = $scope.items.filter(function(todo){ return !todo.done; });
+    };
+    $scope.removeAll = function() {
+        $scope.items = [];
+    }
+    */
+});
+</script>
+    
+</body>
+</html>
